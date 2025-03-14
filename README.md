@@ -53,7 +53,6 @@
 ## Cài đặt
 
 ### Cách 1: Cài đặt thủ công
-   ```
 1.  Mở Command Prompt, điều hướng đến thư mục dự án và chạy lệnh này để tạo môi trường ảo:
    ```
    python -m venv venv
