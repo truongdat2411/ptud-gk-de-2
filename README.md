@@ -28,11 +28,11 @@
 ## Tính năng nổi bật
 
 1. **Giao diện thân thiện**: Thiết kế card-based hiện đại, dễ sử dụng trên nhiều thiết bị
-3. **Quản lý thời hạn**: Thiết lập và theo dõi deadline cho từng nhiệm vụ
-4. **Lọc và sắp xếp**: Lọc nhiệm vụ theo danh mục, trạng thái và sắp xếp theo thời hạn
-5. **Hệ thống tài khoản**: Đăng ký, đăng nhập và quản lý hồ sơ cá nhân
-6. **Quản trị viên**: Trang quản lý riêng cho admin để quản lý người dùng
-7. **Quản lí phân loại task**: Các task sẽ được phân loại để cho người dùng dễ dàng theo dõi
+2. **Quản lý thời hạn**: Thiết lập và theo dõi deadline cho từng nhiệm vụ
+3. **Lọc và sắp xếp**: Lọc nhiệm vụ theo danh mục, trạng thái và sắp xếp theo thời hạn
+4. **Hệ thống tài khoản**: Đăng ký, đăng nhập và quản lý hồ sơ cá nhân
+5. **Quản trị viên**: Trang quản lý riêng cho admin để quản lý người dùng
+6. **Quản lí phân loại task**: Các task sẽ được phân loại để cho người dùng dễ dàng theo dõi
 
 ## Công nghệ sử dụng
 
@@ -49,14 +49,24 @@
 
 # Hướng dẫn cài đặt
 
-
 ## Cài đặt
 
-### Cách 1: Cài đặt thủ công
+### Cách 1: Cài đặt tự động
+
+Nhấp chuột vào file `setup.bat` sau đó sẽ được đưa đến trang đăng nhập.
+
+Tài khoản admin:
+-username: admin
+-password: admin123
+
+### Cách 2: Cài đặt thủ công
+
 1.  Mở Command Prompt, điều hướng đến thư mục dự án và chạy lệnh này để tạo môi trường ảo:
-   ```
-   python -m venv venv
-   ```
+
+```
+python -m venv venv
+```
+
 2. Kích hoạt môi trường ảo:
    - Windows: `venv\Scripts\activate`
    - Linux/Mac: `source venv/bin/activate`

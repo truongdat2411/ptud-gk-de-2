@@ -32,7 +32,7 @@ echo.
 REM Kiểm tra môi trường ảo đã tồn tại chưa
 if not exist "venv" (
     echo [INFO] Creating virtual environment...
-    python -m virtualenv venv
+    python -m venv venv
     if %errorlevel% neq 0 (
         echo [ERROR] Unable to create virtual environment.
         pause
@@ -45,7 +45,7 @@ echo.
 
 REM Kích hoạt môi trường ảo
 echo [INFO] Activating virtual environment...
-call venv\Scripts\activate
+call venv\Scripts\activate.bat
 if %errorlevel% neq 0 (
     echo [ERROR] Unable to activate virtual environment.
     pause
