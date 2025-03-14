@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bảng Điều Khiển</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .navbar {
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .navbar-brand {
+        color: #4caf50 !important;
+        font-weight: bold;
+      }
+      .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        margin-bottom: 20px;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+      }
+      .task-card {
+        border-left: 5px solid #4caf50;
+      }
+      .task-card.completed {
+        border-left: 5px solid #2196f3;
+        background-color: #f5f9ff;
+      }
+      .task-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+      .task-deadline {
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
+      .task-status {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+      .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+      .status-completed {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      .btn-action {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+      }
+      .btn-complete {
+        background-color: #4caf50;
+        color: white;
+      }
+      .btn-complete:hover {
+        background-color: #45a049;
+        color: white;
+      }
+      .btn-edit {
+        background-color: #2196f3;
+        color: white;
+      }
+      .btn-edit:hover {
+        background-color: #1976d2;
+        color: white;
+      }
+      .add-task-card {
+        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+        color: white;
+        cursor: pointer;
+      }
+      .add-task-card:hover {
+        background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+      }
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #4caf50;
+      }
+      .category-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        margin-top: 5px;
+        color: white;
+      }
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+      .action-button {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: white;
+        font-weight: 500;
+      }
+      .categories-button {
+        background-color: #ff9800;
+      }
+      .categories-button:hover {
+        background-color: #f57c00;
+        color: white;
+      }
+      .tasks-button {
+        background-color: #4caf50;
+      }
+      .tasks-button:hover {
+        background-color: #45a049;
+        color: white;
+      }
+      .task-checkbox {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        transform: scale(1.2);
+      }
+      .delete-selected-btn {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        display: none;
+      }
+      .delete-selected-btn:hover {
+        background-color: #d32f2f;
+      }
+      .select-all-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .select-all-container label {
+        margin-left: 10px;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light mb-4">
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          <i class="fas fa-tasks me-2"></i>Task Manager
+        </a>
+        <div class="d-flex align-items-center">
+          <div class="position-relative me-3">
+            <img
+              src="{{ url_for('uploaded_file', filename=current_user.avatar) }}"
+              alt="Avatar"
+              class="avatar"
+            />
+          </div>
+          <div class="dropdown">
+            <button
+              class="btn btn-link text-dark dropdown-toggle"
+              type="button"
+              id="userDropdown"
+              data-bs-toggle="dropdown"
+            >
+              {{ current_user.username }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <a class="dropdown-item" href="{{ url_for('profile') }}"
+                  ><i class="fas fa-user me-2"></i>Hồ sơ</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="{{ url_for('categories') }}"
+                  ><i class="fas fa-tags me-2"></i>Phân loại</a
+                >
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a
+                  class="dropdown-item text-danger"
+                  href="{{ url_for('logout') }}"
+                  ><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <!-- Toast Notifications -->
+      <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
+        <div id="toast-container">
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+          <div
+            class="toast show"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-bs-delay="5000"
+          >
+            <div
+              class="toast-header {% if category == 'success' %}bg-success text-white{% elif category == 'error' %}bg-danger text-white{% else %}bg-info text-white{% endif %}"
+            >
+              <i
+                class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% else %}info-circle{% endif %} me-2"
+              ></i>
+              <strong class="me-auto">Thông báo</strong>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="toast"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="toast-body">{{ message }}</div>
+          </div>
+          {% endfor %} {% endif %} {% endwith %}
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <a
+            href="{{ url_for('dashboard') }}"
+            class="action-button tasks-button d-block"
+          >
+            <i class="fas fa-tasks me-2"></i>Quản lý nhiệm vụ
+          </a>
+        </div>
+        <div class="col-md-6">
+          <a
+            href="{{ url_for('categories') }}"
+            class="action-button categories-button d-block"
+          >
+            <i class="fas fa-tags me-2"></i>Quản lý phân loại
+          </a>
+        </div>
+      </div>
+
+      <!-- Add Task Card -->
+      <div
+        class="card add-task-card mb-4"
+        data-bs-toggle="modal"
+        data-bs-target="#addTaskModal"
+      >
+        <div class="card-body d-flex align-items-center justify-content-center">
+          <i class="fas fa-plus-circle me-2"></i>
+          <h5 class="card-title mb-0">Thêm Nhiệm Vụ Mới</h5>
+        </div>
+      </div>
+
+      <!-- Bulk Actions -->
+      <div class="row mb-3">
+        <div class="col-12">
+          <div class="select-all-container">
+            <input type="checkbox" id="select-all" class="form-check-input" />
+            <label for="select-all" class="form-check-label">Chọn tất cả</label>
+          </div>
+          <form
+            id="delete-tasks-form"
+            action="{{ url_for('delete_tasks') }}"
+            method="POST"
+          >
+            <button
+              type="submit"
+              id="delete-selected-btn"
+              class="delete-selected-btn"
+            >
+              <i class="fas fa-trash-alt me-2"></i>Xóa các nhiệm vụ đã chọn
+            </button>
+
+            <!-- Tasks Grid -->
+            <div class="row">
+              {% for task in tasks %}
+              <div class="col-md-6 col-lg-4">
+                <div
+                  class="card task-card {% if task.status == 'Completed' %}completed{% endif %}"
+                  {%
+                  if
+                  task.category
+                  %}style="border-left-color: {{ task.category.color }}"
+                  {%
+                  endif
+                  %}
+                >
+                  <div class="card-body position-relative">
+                    <input
+                      type="checkbox"
+                      name="task_ids"
+                      value="{{ task.id }}"
+                      class="form-check-input task-checkbox"
+                    />
+                    <div
+                      class="d-flex justify-content-between align-items-start mb-3"
+                    >
+                      <h5 class="task-title mb-0">{{ task.title }}</h5>
+                      <span
+                        class="task-status {% if task.status == 'Pending' %}status-pending{% else %}status-completed{% endif %}"
+                      >
+                        {{ task.status }}
+                      </span>
+                    </div>
+                    {% if task.category %}
+                    <div
+                      class="category-badge"
+                      style="background-color: {{ task.category.color }}"
+                    >
+                      <i class="fas fa-tag me-1"></i>{{ task.category.name }}
+                    </div>
+                    {% endif %} {% if task.deadline %}
+                    <p class="task-deadline mb-3">
+                      <i class="far fa-clock me-1"></i>
+                      {{ task.deadline|adjust_timezone|strftime }}
+                    </p>
+                    {% endif %}
+                    <p class="task-deadline mb-3">
+                      <i class="fas fa-calendar-plus me-1"></i>
+                      Ngày tạo: {{ task.created_at|adjust_timezone|strftime }}
+                    </p>
+                    <div class="d-flex justify-content-end gap-2">
+                      {% if task.status == 'Pending' %}
+                      <a
+                        href="{{ url_for('edit_task', task_id=task.id) }}"
+                        class="btn btn-action btn-edit"
+                      >
+                        <i class="fas fa-edit me-1"></i>Sửa
+                      </a>
+                      <a
+                        href="{{ url_for('complete_task', task_id=task.id) }}"
+                        class="btn btn-action btn-complete"
+                      >
+                        <i class="fas fa-check me-1"></i>Hoàn thành
+                      </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% else %}
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-body text-center py-5">
+                    <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                    <h5 class="card-title">Chưa có nhiệm vụ nào</h5>
+                    <p class="card-text text-muted">
+                      Nhấn vào "Thêm Nhiệm Vụ Mới" để bắt đầu
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div class="modal fade" id="addTaskModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Thêm Nhiệm Vụ Mới</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <form action="{{ url_for('add_task') }}" method="POST">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="title" class="form-label">Tiêu đề</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  name="title"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="category_id" class="form-label">Phân loại</label>
+                <select class="form-select" id="category_id" name="category_id">
+                  <option value="">-- Không phân loại --</option>
+                  {% for category in categories %}
+                  <option
+                    value="{{ category.id }}"
+                    style="color: {{ category.color }}"
+                  >
+                    {{ category.name }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="deadline" class="form-label">Hạn chót</label>
+                <input
+                  type="datetime-local"
+                  class="form-control"
+                  id="deadline"
+                  name="deadline"
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Hủy
+              </button>
+              <button type="submit" class="btn btn-primary">Thêm</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Tự động ẩn thông báo sau 5 giây
+      document.addEventListener("DOMContentLoaded", function () {
+        var toastElList = [].slice.call(document.querySelectorAll(".toast"));
+        var toastList = toastElList.map(function (toastEl) {
+          var toast = new bootstrap.Toast(toastEl, {
+            autohide: true,
+            delay: 5000,
+          });
+          return toast;
+        });
+
+        // Tự động xóa toast sau khi ẩn
+        toastElList.forEach(function (toast) {
+          toast.addEventListener("hidden.bs.toast", function () {
+            this.remove();
+          });
+        });
+
+        // Xử lý chọn nhiều task
+        const checkboxes = document.querySelectorAll(".task-checkbox");
+        const selectAllCheckbox = document.getElementById("select-all");
+        const deleteSelectedBtn = document.getElementById(
+          "delete-selected-btn"
+        );
+
+        // Hiển thị/ẩn nút xóa dựa trên số lượng task được chọn
+        function updateDeleteButton() {
+          const checkedBoxes = document.querySelectorAll(
+            ".task-checkbox:checked"
+          );
+          if (checkedBoxes.length > 0) {
+            deleteSelectedBtn.style.display = "block";
+            deleteSelectedBtn.textContent = `Xóa ${checkedBoxes.length} nhiệm vụ đã chọn`;
+          } else {
+            deleteSelectedBtn.style.display = "none";
+          }
+        }
+
+        // Xử lý sự kiện khi chọn/bỏ chọn task
+        checkboxes.forEach((checkbox) => {
+          checkbox.addEventListener("change", updateDeleteButton);
+        });
+
+        // Xử lý sự kiện khi chọn/bỏ chọn tất cả
+        selectAllCheckbox.addEventListener("change", function () {
+          checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+          });
+          updateDeleteButton();
+        });
+
+        // Xác nhận trước khi xóa
+        document
+          .getElementById("delete-tasks-form")
+          .addEventListener("submit", function (e) {
+            const checkedBoxes = document.querySelectorAll(
+              ".task-checkbox:checked"
+            );
+            if (checkedBoxes.length === 0) {
+              e.preventDefault();
+              alert("Vui lòng chọn ít nhất một nhiệm vụ để xóa!");
+            } else {
+              if (
+                !confirm(
+                  `Bạn có chắc chắn muốn xóa ${checkedBoxes.length} nhiệm vụ đã chọn không?`
+                )
+              ) {
+                e.preventDefault();
+              }
+            }
+          });
+      });
+    </script>
+  </body>
+</html>
