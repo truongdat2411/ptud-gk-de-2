@@ -62,8 +62,8 @@
         color: #856404;
       }
       .status-completed {
-        background-color: #d4edda;
-        color: #155724;
+        background-color: #4caf50;
+        color: white;
       }
       .btn-action {
         padding: 5px 10px;
@@ -284,109 +284,80 @@
         </div>
       </div>
 
-      <!-- Bulk Actions -->
-      <div class="row mb-3">
-        <div class="col-12">
-          <div class="select-all-container">
-            <input type="checkbox" id="select-all" class="form-check-input" />
-            <label for="select-all" class="form-check-label">Chọn tất cả</label>
-          </div>
-          <form
-            id="delete-tasks-form"
-            action="{{ url_for('delete_tasks') }}"
-            method="POST"
+      <!-- Tasks Grid -->
+      <div class="row">
+        {% for task in tasks %}
+        <div class="col-md-6 col-lg-4">
+          <div
+            class="card task-card {% if task.status == 'Completed' %}completed{% endif %}"
+            {%
+            if
+            task.category
+            %}style="border-left-color: {{ task.category.color }}"
+            {%
+            endif
+            %}
           >
-            <button
-              type="submit"
-              id="delete-selected-btn"
-              class="delete-selected-btn"
-            >
-              <i class="fas fa-trash-alt me-2"></i>Xóa các nhiệm vụ đã chọn
-            </button>
-
-            <!-- Tasks Grid -->
-            <div class="row">
-              {% for task in tasks %}
-              <div class="col-md-6 col-lg-4">
-                <div
-                  class="card task-card {% if task.status == 'Completed' %}completed{% endif %}"
-                  {%
-                  if
-                  task.category
-                  %}style="border-left-color: {{ task.category.color }}"
-                  {%
-                  endif
-                  %}
+            <div class="card-body position-relative">
+              <div
+                class="d-flex justify-content-between align-items-start mb-3"
+              >
+                <h5 class="task-title mb-0">{{ task.title }}</h5>
+                <span
+                  class="task-status {% if task.status == 'Pending' %}status-pending{% else %}status-completed{% endif %}"
                 >
-                  <div class="card-body position-relative">
-                    <input
-                      type="checkbox"
-                      name="task_ids"
-                      value="{{ task.id }}"
-                      class="form-check-input task-checkbox"
-                    />
-                    <div
-                      class="d-flex justify-content-between align-items-start mb-3"
-                    >
-                      <h5 class="task-title mb-0">{{ task.title }}</h5>
-                      <span
-                        class="task-status {% if task.status == 'Pending' %}status-pending{% else %}status-completed{% endif %}"
-                      >
-                        {{ task.status }}
-                      </span>
-                    </div>
-                    {% if task.category %}
-                    <div
-                      class="category-badge"
-                      style="background-color: {{ task.category.color }}"
-                    >
-                      <i class="fas fa-tag me-1"></i>{{ task.category.name }}
-                    </div>
-                    {% endif %} {% if task.deadline %}
-                    <p class="task-deadline mb-3">
-                      <i class="far fa-clock me-1"></i>
-                      {{ task.deadline|adjust_timezone|strftime }}
-                    </p>
-                    {% endif %}
-                    <p class="task-deadline mb-3">
-                      <i class="fas fa-calendar-plus me-1"></i>
-                      Ngày tạo: {{ task.created_at|adjust_timezone|strftime }}
-                    </p>
-                    <div class="d-flex justify-content-end gap-2">
-                      {% if task.status == 'Pending' %}
-                      <a
-                        href="{{ url_for('edit_task', task_id=task.id) }}"
-                        class="btn btn-action btn-edit"
-                      >
-                        <i class="fas fa-edit me-1"></i>Sửa
-                      </a>
-                      <a
-                        href="{{ url_for('complete_task', task_id=task.id) }}"
-                        class="btn btn-action btn-complete"
-                      >
-                        <i class="fas fa-check me-1"></i>Hoàn thành
-                      </a>
-                      {% endif %}
-                    </div>
-                  </div>
-                </div>
+                  {{ task.status }}
+                </span>
               </div>
-              {% else %}
-              <div class="col-12">
-                <div class="card">
-                  <div class="card-body text-center py-5">
-                    <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
-                    <h5 class="card-title">Chưa có nhiệm vụ nào</h5>
-                    <p class="card-text text-muted">
-                      Nhấn vào "Thêm Nhiệm Vụ Mới" để bắt đầu
-                    </p>
-                  </div>
-                </div>
+              {% if task.category %}
+              <div
+                class="category-badge"
+                style="background-color: {{ task.category.color }}"
+              >
+                <i class="fas fa-tag me-1"></i>{{ task.category.name }}
               </div>
-              {% endfor %}
+              {% endif %} {% if task.deadline %}
+              <p class="task-deadline mb-3">
+                <i class="far fa-clock me-1"></i>
+                {{ task.deadline|adjust_timezone|strftime }}
+              </p>
+              {% endif %}
+              <p class="task-deadline mb-3">
+                <i class="fas fa-calendar-plus me-1"></i>
+                Ngày tạo: {{ task.created_at|adjust_timezone|strftime }}
+              </p>
+              <div class="d-flex justify-content-end gap-2">
+                {% if task.status == 'Pending' %}
+                <a
+                  href="{{ url_for('edit_task', task_id=task.id) }}"
+                  class="btn btn-action btn-edit"
+                >
+                  <i class="fas fa-edit me-1"></i>Sửa
+                </a>
+                <a
+                  href="{{ url_for('complete_task', task_id=task.id) }}"
+                  class="btn btn-action btn-complete"
+                >
+                  <i class="fas fa-check me-1"></i>Hoàn thành
+                </a>
+                {% endif %}
+              </div>
             </div>
-          </form>
+          </div>
         </div>
+        {% else %}
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body text-center py-5">
+              <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+              <h5 class="card-title">Chưa có nhiệm vụ nào</h5>
+              <p class="card-text text-muted">
+                Nhấn vào "Thêm Nhiệm Vụ Mới" để bắt đầu
+              </p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
       </div>
     </div>
 
@@ -472,60 +443,6 @@
             this.remove();
           });
         });
-
-        // Xử lý chọn nhiều task
-        const checkboxes = document.querySelectorAll(".task-checkbox");
-        const selectAllCheckbox = document.getElementById("select-all");
-        const deleteSelectedBtn = document.getElementById(
-          "delete-selected-btn"
-        );
-
-        // Hiển thị/ẩn nút xóa dựa trên số lượng task được chọn
-        function updateDeleteButton() {
-          const checkedBoxes = document.querySelectorAll(
-            ".task-checkbox:checked"
-          );
-          if (checkedBoxes.length > 0) {
-            deleteSelectedBtn.style.display = "block";
-            deleteSelectedBtn.textContent = `Xóa ${checkedBoxes.length} nhiệm vụ đã chọn`;
-          } else {
-            deleteSelectedBtn.style.display = "none";
-          }
-        }
-
-        // Xử lý sự kiện khi chọn/bỏ chọn task
-        checkboxes.forEach((checkbox) => {
-          checkbox.addEventListener("change", updateDeleteButton);
-        });
-
-        // Xử lý sự kiện khi chọn/bỏ chọn tất cả
-        selectAllCheckbox.addEventListener("change", function () {
-          checkboxes.forEach((checkbox) => {
-            checkbox.checked = this.checked;
-          });
-          updateDeleteButton();
-        });
-
-        // Xác nhận trước khi xóa
-        document
-          .getElementById("delete-tasks-form")
-          .addEventListener("submit", function (e) {
-            const checkedBoxes = document.querySelectorAll(
-              ".task-checkbox:checked"
-            );
-            if (checkedBoxes.length === 0) {
-              e.preventDefault();
-              alert("Vui lòng chọn ít nhất một nhiệm vụ để xóa!");
-            } else {
-              if (
-                !confirm(
-                  `Bạn có chắc chắn muốn xóa ${checkedBoxes.length} nhiệm vụ đã chọn không?`
-                )
-              ) {
-                e.preventDefault();
-              }
-            }
-          });
       });
     </script>
   </body>
